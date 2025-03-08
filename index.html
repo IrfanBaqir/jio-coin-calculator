@@ -77,9 +77,9 @@
                 let high = totalCoins * (currentPrice * Math.pow(2, year));
                 
                 years.push(year);
-                lowValues.push(low.toFixed(2));
-                mediumValues.push(medium.toFixed(2));
-                highValues.push(high.toFixed(2));
+                lowValues.push(Number(low.toFixed(2)));
+                mediumValues.push(Number(medium.toFixed(2)));
+                highValues.push(Number(high.toFixed(2)));
                 
                 let row = `<tr>
                     <td>${year}</td>
