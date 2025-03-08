@@ -29,6 +29,7 @@
         th, td {
             padding: 10px;
             border: 1px solid #ddd;
+            text-align: center;
         }
         th {
             background-color: #4CAF50;
@@ -62,13 +63,17 @@
     <script>
         function calculateEarnings() {
             let hoursPerDay = parseFloat(document.getElementById('hours').value);
+            if (isNaN(hoursPerDay) || hoursPerDay < 1 || hoursPerDay > 24) {
+                alert("Please enter a valid number of hours (1-24).\nDecimals are allowed.");
+                return;
+            }
+            
             let monthlyCoins = hoursPerDay * 0.13 * 30;
             let currentPrice = 100;
             let tbody = document.querySelector('#results tbody');
             tbody.innerHTML = '';
             
-            let years = [];
-            let lowValues = [], mediumValues = [], highValues = [];
+            let years = [], totalCoinsArr = [], lowValues = [], mediumValues = [], highValues = [];
             
             for (let year = 1; year <= 20; year++) {
                 let totalCoins = monthlyCoins * 12 * year;
@@ -77,6 +82,7 @@
                 let high = totalCoins * (currentPrice * Math.pow(2, year));
                 
                 years.push(year);
+                totalCoinsArr.push(totalCoins.toFixed(2));
                 lowValues.push(Number(low.toFixed(2)));
                 mediumValues.push(Number(medium.toFixed(2)));
                 highValues.push(Number(high.toFixed(2)));
@@ -90,17 +96,26 @@
                 </tr>`;
                 tbody.innerHTML += row;
             }
-            renderChart(years, lowValues, mediumValues, highValues);
+            renderChart(years, totalCoinsArr, lowValues, mediumValues, highValues);
         }
         
-        function renderChart(years, lowValues, mediumValues, highValues) {
+        function renderChart(years, totalCoinsArr, lowValues, mediumValues, highValues) {
             let ctx = document.getElementById('coinChart').getContext('2d');
-            if (window.coinChart) window.coinChart.destroy();
+            if (window.coinChart instanceof Chart) {
+                window.coinChart.destroy();
+            }
             window.coinChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: years,
                     datasets: [
+                        {
+                            label: 'Total Coins Earned',
+                            data: totalCoinsArr,
+                            borderColor: 'purple',
+                            fill: false,
+                            tension: 0.1
+                        },
                         {
                             label: 'Low Growth (5%)',
                             data: lowValues,
